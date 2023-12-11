@@ -4,33 +4,84 @@
 <body>
 <div class="container">
   <div th:replace="fragments/bodyHeader :: bodyHeader"/>
-  <form th:action="@{/items/new}" th:object="${bookForm}" method="post">
+  <form th:action="@{/items/new}" th:object="${itemForm}" method="post">
     <div class="form-group">
-      <label th:for="name">상품명</label>
-      <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요">
+      <label for="itemType">상품 종류</label>
+      <select name="itemType", id="itemType" class = "form-control" onchange="changeInput()">
+        <option value="Book">책</option>
+        <option value="Album">앨범</option>
+        <option value="Movie">영화</option>
+      </select>
     </div>
-    <div class="form-group">
-      <label th:for="price">가격</label>
-      <input type="number" th:field="*{price}" class="form-control" placeholder="가격을 입력하세요">
+    <div id="staticForm">
+      <div class="form-group">
+        <label th:for="name">상품명</label>
+        <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요">
+      </div>
+      <div class="form-group">
+        <label th:for="price">가격</label>
+        <input type="number" th:field="*{price}" class="form-control" placeholder="가격을 입력하세요">
+      </div>
+      <div class="form-group">
+        <label th:for="stockQuantity">수량</label>
+        <input type="number" th:field="*{stockQuantity}" class="form-control" placeholder="수량을 입력하세요">
+      </div>
     </div>
-    <div class="form-group">
-      <label th:for="stockQuantity">수량</label>
-      <input type="number" th:field="*{stockQuantity}" class="form-control" placeholder="수량을 입력하세요">
+    <div id="dynamicForm">
+
     </div>
-    <div class="form-group">
-      <label th:for="author">저자</label>
-      <input type="text" th:field="*{author}" class="form-control"
-             placeholder="저자를 입력하세요">
-    </div>
-    <div class="form-group">
-      <label th:for="isbn">ISBN</label>
-      <input type="text" th:field="*{isbn}" class="form-control"
-             placeholder="ISBN을 입력하세요">
-    </div>
+
+
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
   <br/>
   <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->
+<script th:inline="javascript">
+  document.addEventListener("DOMContentLoaded", changeInput)
+  function changeInput(){
+    var selectOption = document.getElementById("itemType").value;
+    var dynamicContainer = document.getElementById("dynamicForm");
+    dynamicContainer.innerHTML = "";
+
+    if (selectOption == "Book"){
+      dynamicContainer.appendChild(makeForm("author"))
+      dynamicContainer.appendChild(makeForm("isbn"))
+    }else if(selectOption == "Album"){
+      dynamicContainer.appendChild(makeForm("artist"))
+      dynamicContainer.appendChild(makeForm("etc"))
+    }else if(selectOption == "Movie"){
+      dynamicContainer.appendChild(makeForm("director"))
+      dynamicContainer.appendChild(makeForm("actor"))
+    }
+  }
+  var itemDict = {
+    author: "저자",
+    isbn: "isbn",
+    director: "감독",
+    actor: "배우",
+    artist: "가수",
+    etc: "그외 정보"
+  };
+
+  function makeForm(name){
+    var newDiv = document.createElement("div")
+    newDiv.className = "form-group"
+    var newLabel = document.createElement("label")
+    newLabel.htmlFor = name
+    newLabel.textContent = itemDict[name]
+    var newInput = document.createElement("input")
+    newInput.type = "text"
+    newInput.id = name
+    newInput.name = name
+    newInput.className = "form-control"
+    newInput.placeholder = `${itemDict[name]}을(를) 입력하세요`
+    newDiv.appendChild(newLabel)
+    newDiv.appendChild(newInput)
+    return newDiv
+  }
+
+</script>
+
 </body>
 </html>

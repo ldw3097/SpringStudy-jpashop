@@ -3,6 +3,8 @@ package jpabook.jpashop.domain.item;
 import jakarta.persistence.*;
 import jpabook.jpashop.domain.Category;
 import jpabook.jpashop.exception.NotEnoughStockException;
+import jpabook.jpashop.web.ItemForm;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,11 +29,23 @@ public class Item {
     @ManyToMany(mappedBy = "items")
     private List<Category> categories = new ArrayList<Category>();
 
+    public Item(String name, int price, int stockQuantity){
+        this.name = name;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+    }
+
+    public Item() {
+
+    }
+
+
     //==비즈니스 로직==//
     public void addStock(int quantity){
         this.stockQuantity += quantity;
 
     }
+
 
     public void removeStock(int quantity){
         int restStock = this.stockQuantity - quantity;
@@ -40,6 +54,10 @@ public class Item {
         }
         this.stockQuantity = restStock;
     }
+
+
+
+
 }
 
 
